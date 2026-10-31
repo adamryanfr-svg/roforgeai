@@ -24,7 +24,7 @@
 
 1. Télécharge RoForge : bouton vert **Code › Download ZIP**, puis décompresse-le. Si tu as Git, tu peux aussi lancer :
    ```
-   git clone https://github.com/adamryanfr-svg/roforge.git
+   git clone https://github.com/adamryanfr-svg/roforgeai.git
    ```
 2. Double-clique sur **`RoForge.bat`**. Au premier lancement, il installe tout ce qu'il faut (quelques minutes), puis ouvre RoForge.
 3. Dans RoForge, va dans **Réglages › Comptes** et connecte Claude (et Codex si tu veux les images). La connexion se fait dans la fenêtre officielle : RoForge ne voit jamais tes identifiants.
