@@ -1,0 +1,23 @@
+{
+  "name": "roforge",
+  "productName": "RoForge",
+  "version": "0.1.0",
+  "description": "Atelier Roblox : Claude Code + Codex + Roblox Studio dans une seule app.",
+  "main": "src/main/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "check": "node scripts/check.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.1.311",
+    "@chrrxs/robloxstudio-mcp": "^3.4.2",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@openai/codex": "^0.164.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "electron": "^38.2.0"
+  }
+}

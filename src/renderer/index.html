@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' roforge-file: data:; media-src roforge-file:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'" />
+    <title>RoForge</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand"><img class="logo" src="logo.png" alt="" />RoForge</div>
+        <div class="actions">
+          <button class="btn primary grow" id="btn-new-game"><i data-icon="plus"></i>Nouveau jeu</button>
+          <button class="btn" id="btn-import" title="Ajouter un jeu existant (n’importe quel dossier)"><i data-icon="folder"></i></button>
+        </div>
+        <div class="list">
+          <div class="section-label">Jeux</div>
+          <div id="games"></div>
+        </div>
+        <div class="limits" id="limits"></div>
+        <div class="footer">
+          <button class="btn ghost" id="btn-settings"><i data-icon="gear"></i>Réglages</button>
+          <span class="spacer"></span>
+          <button class="pill" id="btn-theme" title="Clair / sombre"><i data-icon="sun"></i></button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="titlebar">
+          <button class="pill" id="pill-studio" title="Roblox Studio"><span class="dot"></span><span>Studio</span></button>
+          <button class="pill" id="pill-blender" title="Modèles 3D : MeshParts IA"><span class="dot"></span><span>3D MeshPart</span></button>
+          <button class="pill" id="pill-agents" title="Comptes Claude et Codex"><span class="dot"></span><span>Claude · Codex</span></button>
+          <button class="pill backup" id="pill-backup" title="Sauvegarde des jeux"><i data-icon="cloud"></i><span>Pas sauvegardé</span></button>
+          <span class="spacer"></span>
+          <div class="tools">
+            <button class="tool" data-panel="studio"><i data-icon="studio"></i><span>Studio</span></button>
+            <button class="tool" id="tool-folder"><i data-icon="folder"></i><span>Dossier</span></button>
+            <button class="tool" data-panel="files"><i data-icon="image"></i><span>Images</span></button>
+            <button class="tool" data-panel="gallery"><i data-icon="wand"></i><span>Galerie</span></button>
+            <button class="tool" data-panel="refs"><i data-icon="book"></i><span>Références</span></button>
+            <button class="tool" data-panel="rules"><i data-icon="memory"></i><span>Mémoire</span></button>
+            <button class="tool" data-panel="examples"><i data-icon="check"></i><span>Validés</span></button>
+            <button class="tool" id="tool-balance"><i data-icon="chart"></i><span>Équilibrage</span></button>
+            <button class="tool" data-panel="tests" id="tool-tests"><i data-icon="play"></i><span>Tester</span></button>
+            <button class="tool" data-panel="journal"><i data-icon="journal"></i><span>Journal</span></button>
+            <button class="tool" data-panel="search"><i data-icon="search"></i><span>Chercher</span></button>
+          </div>
+        </div>
+
+        <div class="body">
+          <section class="chat">
+            <div class="scroll" id="scroll">
+              <div class="column" id="messages"></div>
+            </div>
+            <div class="column composer-wrap">
+              <div id="summary-banner"></div>
+              <div id="favorites" class="favorites"></div>
+              <div id="queue"></div>
+              <div class="composer" id="composer">
+                <div id="attachments" class="attachments"></div>
+                <textarea id="input" rows="1" placeholder="Décris ce que tu veux… (les demandes d’images partent à Codex, le reste à Claude)"></textarea>
+                <div class="composer-row">
+                  <button class="icon-btn" id="btn-attach" title="Ajouter des images de référence (ou colle / glisse-les dans la fenêtre)"><i data-icon="plus"></i></button>
+                  <div class="segmented" id="agent-seg">
+                    <button data-agent="auto" class="on">Auto</button>
+                    <button data-agent="claude">Claude</button>
+                    <button data-agent="codex">Codex · images</button>
+                  </div>
+                  <span class="spacer"></span>
+                  <select id="model-select" title="Modèle Claude">
+                    <option value="opus">Opus 5.5</option>
+                    <option value="sonnet">Sonnet 5.5</option>
+                    <option value="haiku">Haiku 5.5</option>
+                  </select>
+                  <select id="effort-select" title="Niveau de réflexion">
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyen</option>
+                    <option value="high">Fort</option>
+                    <option value="xhigh">Extra</option>
+                    <option value="max">Max</option>
+                  </select>
+                  <button class="send" id="btn-send" title="Envoyer" disabled><i data-icon="send"></i></button>
+                  <button class="send stop hidden" id="btn-stop" title="Arrêter"><i data-icon="stop"></i></button>
+                </div>
+              </div>
+              <div class="hint">Entrée pour envoyer · Maj+Entrée pour aller à la ligne · glisse ou colle des images · @codex / @claude pour forcer le destinataire</div>
+            </div>
+          </section>
+
+          <aside class="rpanel hidden" id="rpanel">
+            <div class="rpanel-head"><b id="rpanel-title"></b><button class="icon-btn" id="rpanel-close"><i data-icon="x"></i></button></div>
+            <div class="rpanel-body">
+              <section data-section="studio">
+                <div id="studio-card" class="card"></div>
+                <div class="row-wrap">
+                  <button class="btn small" id="btn-snapshot">Sauvegarder la place</button>
+                  <button class="btn small" id="btn-snapshots">Sauvegardes de la place</button>
+                  <button class="btn small" id="btn-plugin">Réinstaller le plugin</button>
+                </div>
+                <div id="snapshots" class="stack"></div>
+                <div class="section-label">État des MCP</div>
+                <div id="mcp-list" class="stack"></div>
+                <div class="section-label">Sortie de Studio</div>
+                <div id="studio-logs" class="logs"></div>
+              </section>
+              <section data-section="files">
+                <div class="muted">Images et modèles 3D du jeu : clic = joindre au message, double-clic = agrandir, clic droit = Corbeille.</div>
+                <div id="files-grid" class="grid"></div>
+              </section>
+              <section data-section="gallery">
+                <div class="muted">Des centaines de miniatures, VFX, GUI, animations… à recréer pour ton jeu : clique sur « Recréer », l’agent spécialisé en fait une version originale.</div>
+                <div id="gal-types" class="chips"></div>
+                <input id="gal-search" class="input" placeholder="Filtrer : anime, fire, shop, horror…" />
+                <div id="gal-count" class="muted"></div>
+                <div id="gal-grid" class="grid gallery"></div>
+                <button class="btn small hidden" id="gal-more">Plus</button>
+              </section>
+              <section data-section="refs">
+                <input id="ref-search" class="input" placeholder="Chercher : shop, slash, loading, anime…" />
+                <div id="ref-cats" class="chips"></div>
+                <div id="ref-groups" class="chips small"></div>
+                <div id="ref-count" class="muted"></div>
+                <div id="ref-grid" class="grid"></div>
+                <button class="btn small hidden" id="ref-more">Plus de références</button>
+              </section>
+              <section data-section="rules">
+                <div class="muted">Mémoire : les règles que Claude et Codex suivent, toujours.</div>
+                <textarea id="rule-input" class="input" rows="2" placeholder="Ex. : Les pieds des animaux touchent toujours le sol, sans le traverser."></textarea>
+                <div class="row-wrap">
+                  <select id="rule-scope"><option value="jeu">Ce jeu</option><option value="tous">Tous les jeux</option></select>
+                  <button class="btn primary small" id="btn-add-rule">Ajouter une règle</button>
+                </div>
+                <div id="rules-list" class="stack"></div>
+              </section>
+              <section data-section="examples">
+                <div class="muted">Bibliothèque : réussites validées, réutilisées dans tes jeux. Valide un résultat avec « Valider » sous une réponse.</div>
+                <div id="examples-list" class="stack"></div>
+              </section>
+              <section data-section="tests">
+                <div class="muted">Test de jeu automatique : un joueur simulé joue en Play (son coupé), RoForge te rend un rapport. Ouvre d’abord le jeu dans Studio.</div>
+                <div class="row-wrap">
+                  <select id="test-duration" title="Durée du jeu simulé">
+                    <option value="30">30 s</option>
+                    <option value="45" selected>45 s</option>
+                    <option value="90">90 s</option>
+                    <option value="180">3 min</option>
+                  </select>
+                  <button class="btn primary small" id="btn-run-test"><i data-icon="play"></i>Lancer le test de jeu</button>
+                </div>
+                <div id="test-status"></div>
+                <div id="test-report"></div>
+                <div class="section-label">Rapports précédents</div>
+                <div id="tests-list" class="stack"></div>
+              </section>
+              <section data-section="journal">
+                <div class="muted">Ce qui a été fait, jour par jour, et notes de mise à jour pour tes joueurs.</div>
+                <button class="btn small" id="btn-patch-notes">Écrire les notes de mise à jour</button>
+                <div id="journal-list" class="stack"></div>
+              </section>
+              <section data-section="search">
+                <input id="conv-search" class="input" placeholder="Chercher dans toutes les conversations de ce jeu" />
+                <div id="search-results" class="stack"></div>
+              </section>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <div id="modal-root"></div>
+    <div id="toasts"></div>
+    <script src="icons.js"></script>
+    <script src="markdown.js"></script>
+    <script src="balance.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
